@@ -4,6 +4,7 @@ import { tickets } from "@/db/schema";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
+import { desc, eq, sql } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -72,11 +73,43 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const allTickets = await db.select().from(tickets);
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get("email");
+
+    let query = db.select().from(tickets);
+
+    // If email is provided, filter by client email
+    if (email) {
+      query = query.where(eq(tickets.clientEmail, email)) as typeof query;
+    }
+
+    const allTickets = await query.orderBy(desc(tickets.createdAt));
     return NextResponse.json(allTickets);
-  } catch {
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: "Failed to fetch tickets" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, status, assignedTo } = body;
+
+    await db
+      .update(tickets)
+      .set({
+        status: status || undefined,
+        assignedTo: assignedTo || undefined,
+        updatedAt: sql`CURRENT_TIMESTAMP`,
+      })
+      .where(eq(tickets.id, id));
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Failed to update ticket" }, { status: 500 });
   }
 }
