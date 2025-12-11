@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { db } from "@/db";
+import { tickets } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function TicketSubmittedPage({
   params,
@@ -9,6 +13,11 @@ export default async function TicketSubmittedPage({
 }) {
   const { ticketId } = await params;
 
+  const [ticket] = await db
+    .select()
+    .from(tickets)
+    .where(eq(tickets.id, ticketId))
+    .limit(1);
 
   if (!ticket) {
     return (
@@ -109,6 +118,7 @@ export default async function TicketSubmittedPage({
                   controls
                   className="w-full rounded-md border"
                 >
+                  <track kind="captions" />
                   Your browser does not support the video tag.
                 </video>
               </div>
@@ -120,11 +130,13 @@ export default async function TicketSubmittedPage({
                   Screenshots ({screenshotUrls.length})
                 </h2>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  {screenshotUrls.map((url, index) => (
-                    <img
-                      key={index}
+                  {screenshotUrls.map((url) => (
+                    <Image
+                      key={url}
                       src={url}
-                      alt={`Screenshot ${index + 1}`}
+                      alt={`Screenshot ${url}`}
+                      width={200}
+                      height={128}
                       className="rounded-md border object-cover w-full h-32"
                     />
                   ))}
