@@ -1,19 +1,25 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Circle, 
-  CheckCircle2, 
-  Loader2, 
-  User, 
-  Mail, 
+import {
+  Circle,
+  CheckCircle2,
+  Loader2,
+  User,
+  Mail,
   MessageSquare,
   Video,
   Image as ImageIcon,
   Clock,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -34,7 +40,12 @@ type Ticket = {
 
 const statusColumns = [
   { id: "new", title: "New", icon: Circle, color: "bg-blue-500" },
-  { id: "in-progress", title: "In Progress", icon: Loader2, color: "bg-yellow-500" },
+  {
+    id: "in-progress",
+    title: "In Progress",
+    icon: Loader2,
+    color: "bg-yellow-500",
+  },
   { id: "done", title: "Done", icon: CheckCircle2, color: "bg-green-500" },
 ];
 
@@ -79,7 +90,7 @@ export default function DeveloperDashboard() {
         setUpdating(null);
       }
     },
-    [fetchTickets]
+    [fetchTickets],
   );
 
   useEffect(() => {
@@ -170,7 +181,10 @@ export default function DeveloperDashboard() {
                       <Icon className="h-5 w-5" />
                       <h2 className="font-semibold text-lg">{column.title}</h2>
                     </div>
-                    <Badge variant="secondary" className="bg-white/20 text-white">
+                    <Badge
+                      variant="secondary"
+                      className="bg-white/20 text-white"
+                    >
                       {columnTickets.length}
                     </Badge>
                   </div>
@@ -184,123 +198,139 @@ export default function DeveloperDashboard() {
                   ) : (
                     columnTickets.map((ticket) => {
                       const screenshotUrls = JSON.parse(
-                        ticket.screenshotUrls || "[]"
+                        ticket.screenshotUrls || "[]",
                       ) as string[];
                       const isDragging = draggedTicket === ticket.id;
                       const isUpdating = updating === ticket.id;
 
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={ticket.id}
+                          tabIndex={0}
                           draggable
                           onDragStart={() => handleDragStart(ticket.id)}
                           onDragEnd={handleDragEnd}
-                          className={`cursor-move transition-all ${
+                          className={`cursor-move w-full transition-all ${
                             isDragging ? "opacity-50" : ""
                           } ${isUpdating ? "opacity-75" : ""}`}
                         >
                           <Card className="hover:shadow-md">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <CardTitle className="text-base capitalize truncate">
-                                  {ticket.category}
-                                </CardTitle>
-                                <CardDescription className="text-xs mt-1">
-                                  ID: {ticket.id.slice(0, 8)}...
-                                </CardDescription>
-                              </div>
-                              {isUpdating && (
-                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground shrink-0" />
-                              )}
-                            </div>
-                          </CardHeader>
-                          <CardContent className="space-y-3">
-                            <div>
-                              <p className="text-sm line-clamp-3">{ticket.message}</p>
-                            </div>
-
-                            <div className="space-y-2 text-xs text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <User className="h-3 w-3" />
-                                <span className="truncate">{ticket.clientName}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Mail className="h-3 w-3" />
-                                <span className="truncate">{ticket.clientEmail}</span>
-                              </div>
-                              {ticket.assignedTo && (
-                                <div className="flex items-center gap-1">
-                                  <Badge variant="outline" className="text-xs">
-                                    Assigned: {ticket.assignedTo}
-                                  </Badge>
+                            <CardHeader className="pb-3">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <CardTitle className="text-base capitalize truncate">
+                                    {ticket.category}
+                                  </CardTitle>
+                                  <CardDescription className="text-xs mt-1">
+                                    ID: {ticket.id.slice(0, 8)}...
+                                  </CardDescription>
                                 </div>
-                              )}
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                <span>{formatDate(ticket.createdAt)}</span>
+                                {isUpdating && (
+                                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground shrink-0" />
+                                )}
                               </div>
-                            </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                              <div>
+                                <p className="text-sm line-clamp-3">
+                                  {ticket.message}
+                                </p>
+                              </div>
 
-                            <div className="flex flex-wrap gap-1 pt-2 border-t">
-                              {ticket.videoUrl && (
-                                <Badge variant="outline" className="text-xs">
-                                  <Video className="h-3 w-3 mr-1" />
-                                  Video
-                                </Badge>
-                              )}
-                              {screenshotUrls.length > 0 && (
-                                <Badge variant="outline" className="text-xs">
-                                  <ImageIcon className="h-3 w-3 mr-1" />
-                                  {screenshotUrls.length} Screenshot
-                                  {screenshotUrls.length > 1 ? "s" : ""}
-                                </Badge>
-                              )}
-                            </div>
+                              <div className="space-y-2 text-xs text-muted-foreground">
+                                <div className="flex items-center gap-1">
+                                  <User className="h-3 w-3" />
+                                  <span className="truncate">
+                                    {ticket.clientName}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Mail className="h-3 w-3" />
+                                  <span className="truncate">
+                                    {ticket.clientEmail}
+                                  </span>
+                                </div>
+                                {ticket.assignedTo && (
+                                  <div className="flex items-center gap-1">
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      Assigned: {ticket.assignedTo}
+                                    </Badge>
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  <span>{formatDate(ticket.createdAt)}</span>
+                                </div>
+                              </div>
 
-                            <div className="flex gap-2 pt-2">
-                              {ticket.status === "new" && (
+                              <div className="flex flex-wrap gap-1 pt-2 border-t">
+                                {ticket.videoUrl && (
+                                  <Badge variant="outline" className="text-xs">
+                                    <Video className="h-3 w-3 mr-1" />
+                                    Video
+                                  </Badge>
+                                )}
+                                {screenshotUrls.length > 0 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    <ImageIcon className="h-3 w-3 mr-1" />
+                                    {screenshotUrls.length} Screenshot
+                                    {screenshotUrls.length > 1 ? "s" : ""}
+                                  </Badge>
+                                )}
+                              </div>
+
+                              <div className="flex gap-2 pt-2">
+                                {ticket.status === "new" && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="flex-1 text-xs"
+                                    onClick={() =>
+                                      updateTicketStatus(
+                                        ticket.id,
+                                        "in-progress",
+                                        "Developer",
+                                      )
+                                    }
+                                    disabled={isUpdating}
+                                  >
+                                    Claim
+                                  </Button>
+                                )}
+                                {ticket.status === "in-progress" && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="flex-1 text-xs"
+                                    onClick={() =>
+                                      updateTicketStatus(ticket.id, "done")
+                                    }
+                                    disabled={isUpdating}
+                                  >
+                                    Mark Done
+                                  </Button>
+                                )}
                                 <Button
                                   size="sm"
-                                  variant="outline"
-                                  className="flex-1 text-xs"
-                                  onClick={() =>
-                                    updateTicketStatus(
-                                      ticket.id,
-                                      "in-progress",
-                                      "Developer"
-                                    )
-                                  }
-                                  disabled={isUpdating}
+                                  variant="ghost"
+                                  className="text-xs"
+                                  onClick={() => {
+                                    window.open(
+                                      `/ticket-submitted/${ticket.id}`,
+                                      "_blank",
+                                    );
+                                  }}
                                 >
-                                  Claim
+                                  View
                                 </Button>
-                              )}
-                              {ticket.status === "in-progress" && (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="flex-1 text-xs"
-                                  onClick={() => updateTicketStatus(ticket.id, "done")}
-                                  disabled={isUpdating}
-                                >
-                                  Mark Done
-                                </Button>
-                              )}
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="text-xs"
-                                onClick={() => {
-                                  window.open(`/ticket-submitted/${ticket.id}`, "_blank");
-                                }}
-                              >
-                                View
-                              </Button>
-                            </div>
-                          </CardContent>
+                              </div>
+                            </CardContent>
                           </Card>
-                        </div>
+                        </button>
                       );
                     })
                   )}
