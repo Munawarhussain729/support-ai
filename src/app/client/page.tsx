@@ -4,11 +4,26 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Clock, CheckCircle2, Circle, Loader2, Mail, MessageSquare, Video, Image as ImageIcon } from "lucide-react";
+import {
+  Clock,
+  CheckCircle2,
+  Circle,
+  Loader2,
+  Mail,
+  MessageSquare,
+  Video,
+  Image as ImageIcon,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type Ticket = {
   id: string;
@@ -26,9 +41,24 @@ type Ticket = {
 };
 
 const statusConfig = {
-  new: { label: "New", icon: Circle, iconColor: "text-blue-500", color: "bg-blue-500" },
-  "in-progress": { label: "In Progress", icon: Loader2, iconColor: "text-yellow-500", color: "bg-yellow-500" },
-  done: { label: "Done", icon: CheckCircle2, iconColor: "text-green-500", color: "bg-green-500" },
+  new: {
+    label: "New",
+    icon: Circle,
+    iconColor: "text-blue-500",
+    color: "bg-blue-500",
+  },
+  "in-progress": {
+    label: "In Progress",
+    icon: Loader2,
+    iconColor: "text-yellow-500",
+    color: "bg-yellow-500",
+  },
+  done: {
+    label: "Done",
+    icon: CheckCircle2,
+    iconColor: "text-green-500",
+    color: "bg-green-500",
+  },
 };
 
 export default function ClientDashboard() {
@@ -46,7 +76,9 @@ export default function ClientDashboard() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/support?email=${encodeURIComponent(email)}`);
+      const res = await fetch(
+        `/api/support?email=${encodeURIComponent(email)}`,
+      );
       if (!res.ok) {
         throw new Error("Failed to fetch tickets");
       }
@@ -83,7 +115,8 @@ export default function ClientDashboard() {
   };
 
   const getStatusBadge = (status: string) => {
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.new;
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.new;
     const Icon = config.icon;
     return (
       <Badge
@@ -112,7 +145,8 @@ export default function ClientDashboard() {
           <CardHeader>
             <CardTitle>View Your Tickets</CardTitle>
             <CardDescription>
-              Enter the email address you used when submitting your support ticket
+              Enter the email address you used when submitting your support
+              ticket
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -131,7 +165,10 @@ export default function ClientDashboard() {
                       className="pl-10"
                     />
                   </div>
-                  <Button onClick={fetchTickets} disabled={loading || !email.trim()}>
+                  <Button
+                    onClick={fetchTickets}
+                    disabled={loading || !email.trim()}
+                  >
                     {loading ? "Loading..." : "Search"}
                   </Button>
                 </div>
@@ -157,7 +194,9 @@ export default function ClientDashboard() {
           <Card>
             <CardContent className="py-12 text-center">
               <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No tickets found for this email address.</p>
+              <p className="text-muted-foreground">
+                No tickets found for this email address.
+              </p>
               <Link href="/support">
                 <Button variant="outline" className="mt-4">
                   Submit a New Ticket
@@ -179,14 +218,21 @@ export default function ClientDashboard() {
             </div>
 
             {tickets.map((ticket) => {
-              const screenshotUrls = JSON.parse(ticket.screenshotUrls || "[]") as string[];
+              const screenshotUrls = JSON.parse(
+                ticket.screenshotUrls || "[]",
+              ) as string[];
               return (
-                <Card key={ticket.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={ticket.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <CardTitle className="text-lg">{ticket.category}</CardTitle>
+                          <CardTitle className="text-lg">
+                            {ticket.category}
+                          </CardTitle>
                           {getStatusBadge(ticket.status)}
                         </div>
                         <CardDescription>
@@ -204,7 +250,9 @@ export default function ClientDashboard() {
                   <CardContent>
                     <div className="space-y-4">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground mb-1">Message</p>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">
+                          Message
+                        </p>
                         <p className="whitespace-pre-wrap">{ticket.message}</p>
                       </div>
 
