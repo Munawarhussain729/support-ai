@@ -22,9 +22,9 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useTranslations } from "next-intl";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import TicketStats from "@/components/ticketStats";
 import TicketList from "@/components/ticketList";
+import DashboardHeader from "@/components/Header";
 
 // --- Types ---
 export interface Ticket {
@@ -47,7 +47,7 @@ interface ClientInfo {
 
 // --- Component ---
 function ClientDashboard() {
-  const router = useRouter();
+
   const t = useTranslations();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<Ticket[]>([]);
@@ -115,63 +115,13 @@ function ClientDashboard() {
  
 
 
-  const handleAddNew = () => {
-    router.push("/support");
-  };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    router.push("/auth/login");
-  };
   return (
     // biome-ignore lint/correctness/noUnusedVariables: bg-linear-to-br is correct Tailwind syntax
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
-      {/* Top Navigation */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <LayoutDashboard className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">
-                  {t("dashboard.title")}
-                </h1>
-                <p className="text-sm text-gray-600">{t("dashboard.clientDashboard")}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <LanguageSwitcher />
-              <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
-                <User className="w-4 h-4" />
-                {clientInfo.name}
-              </div>
-              <Button
-                onClick={handleAddNew}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
-              >
-                <Plus className="w-5 h-5" />
-                {t("dashboard.newTicket")}
-              </Button>
-              <Button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
-              >
-                <LogOut className="w-5 h-5" />
-                {t("common.logout")}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <DashboardHeader />
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Stats */}
         <TicketStats tickets={tickets||[]} />
-
-        {/* Search and Filters */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
