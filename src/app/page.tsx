@@ -15,6 +15,7 @@ import {
   Filter,
   ChevronUp,
   ChevronDown,
+  LogOut,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
@@ -130,7 +131,11 @@ function ClientDashboard() {
       resolved: "bg-green-100 text-green-800 border-green-300",
       closed: "bg-gray-100 text-gray-800 border-gray-300",
     };
-    return colors[status] || colors.new || "bg-gray-100 text-gray-800 border-gray-300";
+    return (
+      colors[status] ||
+      colors.new ||
+      "bg-gray-100 text-gray-800 border-gray-300"
+    );
   };
 
   const getCategoryColor = (category: Ticket["category"]): string => {
@@ -160,9 +165,15 @@ function ClientDashboard() {
   const TicketStats = () => {
     const stats = {
       total: tickets?.length,
-      pending: tickets?.filter((t) => t.status === "new" || t.status === "pending").length,
-      in_progress: tickets?.filter((t) => t.status === "in-progress" || t.status === "in_progress").length,
-      resolved: tickets?.filter((t) => t.status === "done" || t.status === "resolved").length,
+      pending: tickets?.filter(
+        (t) => t.status === "new" || t.status === "pending",
+      ).length,
+      in_progress: tickets?.filter(
+        (t) => t.status === "in-progress" || t.status === "in_progress",
+      ).length,
+      resolved: tickets?.filter(
+        (t) => t.status === "done" || t.status === "resolved",
+      ).length,
     };
 
     return (
@@ -269,7 +280,9 @@ function ClientDashboard() {
                 )}
                 {(() => {
                   try {
-                    const screenshots = JSON.parse(ticket.screenshotUrls || "[]");
+                    const screenshots = JSON.parse(
+                      ticket.screenshotUrls || "[]",
+                    );
                     return screenshots.length > 0 ? (
                       <div className="flex items-center gap-1">
                         <ImageIcon className="w-4 h-4" />
@@ -315,9 +328,13 @@ function ClientDashboard() {
     router.push("/support");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    router.push("/auth/login");
+  };
   return (
     // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
       {/* Top Navigation */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -346,6 +363,13 @@ function ClientDashboard() {
                 <Plus className="w-5 h-5" />
                 New Ticket
               </Button>
+              <Button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </Button>
             </div>
           </div>
         </div>
@@ -357,72 +381,72 @@ function ClientDashboard() {
 
         {/* Search and Filters */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search tickets by ID, subject, or description..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  />
-                </div>
-                <Button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:shadow-md flex items-center gap-2"
-                >
-                  <Filter className="w-5 h-5" />
-                  Filters
-                  {showFilters ? (
-                    <ChevronUp className="w-4 h-4" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
-
-              {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200">
-                  <div>
-                    <Label className="block text-sm font-medium text-gray-700 mb-2">
-                      Status
-                    </Label>
-                    <select
-                      value={filterStatus}
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="all">All Statuses</option>
-                      <option value="new">New</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="done">Done</option>
-                      <option value="pending">Pending</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="resolved">Resolved</option>
-                      <option value="closed">Closed</option>
-                    </select>
-                  </div>
-                  <div>
-                    <Label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category
-                    </Label>
-                    <select
-                      value={filterCategory}
-                      onChange={(e) => setFilterCategory(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="all">All Categories</option>
-                      <option value="bug">Bug Report</option>
-                      <option value="feature">Feature Request</option>
-                      <option value="question">Question</option>
-                      <option value="suggestion">Suggestion</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                </div>
-              )}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search tickets by ID, subject, or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
             </div>
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:shadow-md flex items-center gap-2"
+            >
+              <Filter className="w-5 h-5" />
+              Filters
+              {showFilters ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </Button>
+          </div>
+
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200">
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </Label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="new">New</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="done">Done</option>
+                  <option value="pending">Pending</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category
+                </Label>
+                <select
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="bug">Bug Report</option>
+                  <option value="feature">Feature Request</option>
+                  <option value="question">Question</option>
+                  <option value="suggestion">Suggestion</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Tickets List */}
         <TicketList />
