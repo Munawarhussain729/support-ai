@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -18,6 +18,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
 import { Upload, X } from "lucide-react";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const formSchema = z.object({
   clientName: z.string().min(1, "Name is required"),
@@ -33,12 +34,13 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function SupportPage() {
+function SupportPageContent() {
   const router = useRouter();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     register,
@@ -51,6 +53,22 @@ export default function SupportPage() {
   });
 
   const category = watch("category");
+
+  // Fetch user details from localStorage
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        setValue("clientName", user.name || "");
+        setValue("clientEmail", user.email || "");
+        setValue("clientPhone", user.phone || "");
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+    setIsLoading(false);
+  }, [setValue]);
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -131,8 +149,18 @@ export default function SupportPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl">
+          <div className="text-center">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -144,7 +172,7 @@ export default function SupportPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white rounded-xl shadow-sm p-6 border border-gray-200">
           {/* Client Name */}
           <div className="space-y-2">
             <Label htmlFor="clientName">
@@ -154,6 +182,8 @@ export default function SupportPage() {
               id="clientName"
               {...register("clientName")}
               placeholder="John Doe"
+              disabled={isSubmitting}
+              className="transition-all focus:ring-2 focus:ring-blue-500"
             />
             {errors.clientName && (
               <p className="text-sm text-destructive">
@@ -172,6 +202,8 @@ export default function SupportPage() {
               type="email"
               {...register("clientEmail")}
               placeholder="john@example.com"
+              disabled={isSubmitting}
+              className="transition-all focus:ring-2 focus:ring-blue-500"
             />
             {errors.clientEmail && (
               <p className="text-sm text-destructive">
@@ -188,6 +220,8 @@ export default function SupportPage() {
               type="tel"
               {...register("clientPhone")}
               placeholder="+1 (555) 123-4567"
+              disabled={isSubmitting}
+              className="transition-all focus:ring-2 focus:ring-blue-500"
             />
             {errors.clientPhone && (
               <p className="text-sm text-destructive">
@@ -203,7 +237,7 @@ export default function SupportPage() {
             </Label>
             <Select
               value={category}
-              onValueChange={(value) => setValue("category", value as any)}
+              onValueChange={(value) => setValue("category", value as "bug" | "request" | "suggestion" | "other")}
             >
               <SelectTrigger id="category">
                 <SelectValue placeholder="Select a category" />
@@ -317,11 +351,23 @@ export default function SupportPage() {
           )}
 
           {/* Submit Button */}
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            className="w-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100" 
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Submitting..." : "Submit Ticket"}
           </Button>
         </form>
       </div>
     </div>
+  );
+}
+
+export default function SupportPage() {
+  return (
+    <ProtectedRoute allowedRoles={["client"]}>
+      <SupportPageContent />
+    </ProtectedRoute>
   );
 }

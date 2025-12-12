@@ -24,6 +24,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 type Ticket = {
   id: string;
@@ -61,11 +62,23 @@ const statusConfig = {
   },
 };
 
-export default function ClientDashboard() {
+function ClientDashboardContent() {
   const [email, setEmail] = useState("");
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        setEmail(user.email || "");
+      } catch (error) {
+        console.error("Error parsing user:", error);
+      }
+    }
+  }, []);
 
   const fetchTickets = useCallback(async () => {
     if (!email.trim()) {
@@ -224,7 +237,7 @@ export default function ClientDashboard() {
               return (
                 <Card
                   key={ticket.id}
-                  className="hover:shadow-md transition-shadow"
+                  className="hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-gray-200"
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -304,8 +317,8 @@ export default function ClientDashboard() {
                       )}
 
                       <div className="pt-4 border-t">
-                        <Link href={`/ticket-submitted/${ticket.id}`}>
-                          <Button variant="outline" size="sm">
+                        <Link href={`/tickets/${ticket.id}`}>
+                          <Button variant="outline" size="sm" className="transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95">
                             View Full Details
                           </Button>
                         </Link>
@@ -319,5 +332,13 @@ export default function ClientDashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ClientDashboard() {
+  return (
+    <ProtectedRoute allowedRoles={["client"]}>
+      <ClientDashboardContent />
+    </ProtectedRoute>
   );
 }

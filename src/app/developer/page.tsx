@@ -22,6 +22,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 type Ticket = {
   id: string;
@@ -49,7 +50,7 @@ const statusColumns = [
   { id: "done", title: "Done", icon: CheckCircle2, color: "bg-green-500" },
 ];
 
-export default function DeveloperDashboard() {
+function DeveloperDashboardContent() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [draggedTicket, setDraggedTicket] = useState<string | null>(null);
@@ -211,11 +212,11 @@ export default function DeveloperDashboard() {
                           draggable
                           onDragStart={() => handleDragStart(ticket.id)}
                           onDragEnd={handleDragEnd}
-                          className={`cursor-move w-full transition-all ${
-                            isDragging ? "opacity-50" : ""
+                          className={`cursor-move w-full transition-all duration-300 ${
+                            isDragging ? "opacity-50 scale-95" : "hover:scale-[1.02]"
                           } ${isUpdating ? "opacity-75" : ""}`}
                         >
-                          <Card className="hover:shadow-md">
+                          <Card className="hover:shadow-lg transition-all duration-300 border-gray-200">
                             <CardHeader className="pb-3">
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex-1 min-w-0">
@@ -317,12 +318,9 @@ export default function DeveloperDashboard() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="text-xs"
+                                  className="text-xs transition-all duration-200 hover:bg-gray-100 hover:scale-105 active:scale-95"
                                   onClick={() => {
-                                    window.open(
-                                      `/ticket-submitted/${ticket.id}`,
-                                      "_blank",
-                                    );
+                                    window.location.href = `/tickets/${ticket.id}`;
                                   }}
                                 >
                                   View
@@ -350,5 +348,13 @@ export default function DeveloperDashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function DeveloperDashboard() {
+  return (
+    <ProtectedRoute allowedRoles={["developer"]}>
+      <DeveloperDashboardContent />
+    </ProtectedRoute>
   );
 }
