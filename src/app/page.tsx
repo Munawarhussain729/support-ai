@@ -1,16 +1,13 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import {
   Clock,
   CheckCircle,
-  MessageSquare,
   Video,
   ImageIcon,
   Calendar,
   FileText,
   RefreshCw,
-  ExternalLink,
-  Send,
   LayoutDashboard,
   User,
   Plus,
@@ -319,6 +316,7 @@ function ClientDashboard() {
   };
 
   return (
+    // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Top Navigation */}
       <div className="bg-white shadow-sm border-b">

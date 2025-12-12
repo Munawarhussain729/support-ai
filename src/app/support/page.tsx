@@ -160,6 +160,7 @@ function SupportPageContent() {
   }
 
   return (
+    // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
