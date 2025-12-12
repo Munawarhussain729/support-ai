@@ -231,34 +231,30 @@ function ClientDashboard() {
   };
 
   const TicketList = () => (
-    <div className="space-y-4">
+    <div className="space-y-2 space-x-2">
       {filteredTickets.map((ticket) => (
         <button
           type="button"
           key={ticket.id}
           onClick={() => router.push(`/tickets/${ticket.id}`)}
-          className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 hover:border-blue-400 transform hover:-translate-y-1 hover:scale-[1.01] active:scale-[0.99]"
+          className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 hover:border-blue-400 w-[20vw] transform hover:-translate-y-1 hover:scale-[1.01] active:scale-[0.99]"
         >
           <div className="p-6">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-sm font-mono text-gray-500">
-                    {ticket.id}
-                  </span>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(ticket.category)}`}
-                  >
-                    {ticket.category}
-                  </span>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(ticket.status)}`}
+                <div className="flex justify-between items-center gap-3 mb-2">
+                  <p className="text-sm font-mono text-gray-500">
+                    {ticket.id?.slice(0, 6)}...{ticket.id?.slice(-4)}
+                  </p>
+               
+                  <div
+                    className={`px-3 py-1 flex items-center rounded-full text-xs font-medium border ${getStatusColor(ticket.status)}`}
                   >
                     {getStatusIcon(ticket.status)}
                     <span className="ml-1 capitalize">
                       {ticket.status.replace("_", " ").replace("-", " ")}
                     </span>
-                  </span>
+                  </div>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 capitalize">
                   {ticket.category}
