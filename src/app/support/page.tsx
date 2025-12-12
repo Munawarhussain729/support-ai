@@ -160,8 +160,8 @@ function SupportPageContent() {
   }
 
   return (
-    // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+    // biome-ignore lint/correctness/noUnusedVariables: bg-linear-to-br is correct Tailwind syntax
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -173,7 +173,10 @@ function SupportPageContent() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 bg-white rounded-xl shadow-sm p-6 border border-gray-200"
+        >
           {/* Client Name */}
           <div className="space-y-2">
             <Label htmlFor="clientName">
@@ -238,7 +241,12 @@ function SupportPageContent() {
             </Label>
             <Select
               value={category}
-              onValueChange={(value) => setValue("category", value as "bug" | "request" | "suggestion" | "other")}
+              onValueChange={(value) =>
+                setValue(
+                  "category",
+                  value as "bug" | "request" | "suggestion" | "other",
+                )
+              }
             >
               <SelectTrigger id="category">
                 <SelectValue placeholder="Select a category" />
@@ -352,9 +360,9 @@ function SupportPageContent() {
           )}
 
           {/* Submit Button */}
-          <Button 
-            type="submit" 
-            className="w-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100" 
+          <Button
+            type="submit"
+            className="w-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Submitting..." : "Submit Ticket"}

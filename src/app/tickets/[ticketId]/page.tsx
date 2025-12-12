@@ -146,9 +146,7 @@ function TicketDetailContent() {
   };
 
   const getStatusBadge = (status: string) => {
-    const config =
-      statusConfig[status] ||
-      statusConfig.new;
+    const config = statusConfig[status] || statusConfig.new;
     const Icon = config.icon;
     return (
       <Badge
@@ -162,8 +160,8 @@ function TicketDetailContent() {
 
   if (loading) {
     return (
-      // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      // biome-ignore lint/correctness/noUnusedVariables: bg-linear-to-br is correct Tailwind syntax
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading ticket details...</p>
@@ -174,8 +172,8 @@ function TicketDetailContent() {
 
   if (error || !ticket) {
     return (
-      // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
+      // biome-ignore lint/correctness/noUnusedVariables: bg-linear-to-br is correct Tailwind syntax
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 border border-red-200">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -210,8 +208,8 @@ function TicketDetailContent() {
   const statusBadge = getStatusBadge(ticket.status);
 
   return (
-    // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    // biome-ignore lint/correctness/noUnusedVariables: bg-linear-to-br is correct Tailwind syntax
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-6">

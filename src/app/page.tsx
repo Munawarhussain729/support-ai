@@ -333,7 +333,7 @@ function ClientDashboard() {
     router.push("/auth/login");
   };
   return (
-    // biome-ignore lint/correctness/noUnusedVariables: bg-gradient-to-br is correct Tailwind syntax
+    // biome-ignore lint/correctness/noUnusedVariables: bg-linear-to-br is correct Tailwind syntax
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
       {/* Top Navigation */}
       <div className="bg-white shadow-sm border-b">

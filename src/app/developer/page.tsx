@@ -310,7 +310,7 @@ function DeveloperDashboardContent() {
                                         </div>
                                         {ticket.assignedTo && (
                                           <div className="flex items-center gap-2">
-                                            <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0 text-xs">
+                                            <Badge className="bg-linear-to-r from-indigo-500 to-purple-500 text-white border-0 text-xs">
                                               👤 {ticket.assignedTo}
                                             </Badge>
                                           </div>
@@ -337,12 +337,12 @@ function DeveloperDashboardContent() {
                                   screenshotUrls.length > 0) && (
                                   <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
                                     {ticket.videoUrl && (
-                                      <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white border-0 text-xs">
+                                      <Badge className="bg-linear-to-r from-red-500 to-pink-500 text-white border-0 text-xs">
                                         🎥 Video
                                       </Badge>
                                     )}
                                     {screenshotUrls.length > 0 && (
-                                      <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 text-xs">
+                                      <Badge className="bg-linear-to-r from-cyan-500 to-blue-500 text-white border-0 text-xs">
                                         🖼️ {screenshotUrls.length} Image
                                         {screenshotUrls.length > 1 ? "s" : ""}
                                       </Badge>
@@ -354,7 +354,7 @@ function DeveloperDashboardContent() {
                                   {ticket.status === "new" && (
                                     <Button
                                       size="sm"
-                                      className="flex-1 text-xs bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-0 shadow-sm"
+                                      className="flex-1 text-xs bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-0 shadow-sm"
                                       onClick={() =>
                                         updateTicketStatus(
                                           ticket.id,
@@ -370,7 +370,7 @@ function DeveloperDashboardContent() {
                                   {ticket.status === "in-progress" && (
                                     <Button
                                       size="sm"
-                                      className="flex-1 text-xs bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white border-0 shadow-sm"
+                                      className="flex-1 text-xs bg-linear-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white border-0 shadow-sm"
                                       onClick={() =>
                                         updateTicketStatus(ticket.id, "done")
                                       }
