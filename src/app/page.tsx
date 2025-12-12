@@ -23,9 +23,11 @@ import { Button } from "@/components/ui/button";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import TicketStats from "@/components/ticketStats";
+import TicketList from "@/components/ticketList";
 
 // --- Types ---
-interface Ticket {
+export interface Ticket {
   id: string;
   category: string;
   message: string;
@@ -110,218 +112,8 @@ function ClientDashboard() {
 
     setFilteredTickets(filtered);
   }, [searchQuery, filterStatus, filterCategory, tickets]);
+ 
 
-  const getStatusIcon = (status: string): React.ReactNode => {
-    const icons: Record<string, React.ReactNode> = {
-      new: <Clock className="w-4 h-4" />,
-      "in-progress": <RefreshCw className="w-4 h-4" />,
-      done: <CheckCircle className="w-4 h-4" />,
-      pending: <Clock className="w-4 h-4" />,
-      in_progress: <RefreshCw className="w-4 h-4" />,
-      resolved: <CheckCircle className="w-4 h-4" />,
-      closed: <CheckCircle className="w-4 h-4" />,
-    };
-    return icons[status] || icons.new || <Clock className="w-4 h-4" />;
-  };
-  // --- Utility functions ---
-  const getStatusColor = (status: string): string => {
-    const colors: Record<string, string> = {
-      new: "bg-blue-100 text-blue-800 border-blue-300",
-      "in-progress": "bg-yellow-100 text-yellow-800 border-yellow-300",
-      done: "bg-green-100 text-green-800 border-green-300",
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-300",
-      in_progress: "bg-blue-100 text-blue-800 border-blue-300",
-      resolved: "bg-green-100 text-green-800 border-green-300",
-      closed: "bg-gray-100 text-gray-800 border-gray-300",
-    };
-    return (
-      colors[status] ||
-      colors.new ||
-      "bg-gray-100 text-gray-800 border-gray-300"
-    );
-  };
-
-  const getCategoryColor = (category: Ticket["category"]): string => {
-    const colors: Record<Ticket["category"] | "other", string> = {
-      bug: "bg-red-100 text-red-800",
-      feature: "bg-blue-100 text-blue-800",
-      question: "bg-green-100 text-green-800",
-      suggestion: "bg-purple-100 text-purple-800",
-      other: "bg-gray-100 text-gray-800",
-    };
-    return colors[category] || colors.other;
-  };
-
-  const formatDate = (timestamp: number): string => {
-    if (!timestamp) return "N/A";
-    const date = new Date(timestamp * 1000);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString();
-  };
-
-  const TicketStats = () => {
-    const stats = {
-      total: tickets?.length,
-      pending: tickets?.filter(
-        (ticket) => ticket.status === "new" || ticket.status === "pending",
-      ).length,
-      in_progress: tickets?.filter(
-        (ticket) => ticket.status === "in-progress" || ticket.status === "in_progress",
-      ).length,
-      resolved: tickets?.filter(
-        (ticket) => ticket.status === "done" || ticket.status === "resolved",
-      ).length,
-    };
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">{t("dashboard.totalTickets")}</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-            <FileText className="w-10 h-10 text-blue-500 opacity-20" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">{t("dashboard.pending")}</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {stats.pending}
-              </p>
-            </div>
-            <Clock className="w-10 h-10 text-yellow-500 opacity-20" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">{t("dashboard.inProgress")}</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {stats.in_progress}
-              </p>
-            </div>
-            <RefreshCw className="w-10 h-10 text-blue-500 opacity-20" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">{t("dashboard.resolved")}</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {stats.resolved}
-              </p>
-            </div>
-            <CheckCircle className="w-10 h-10 text-green-500 opacity-20" />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const TicketList = () => (
-    <div className="space-y-2 space-x-2">
-      {filteredTickets.map((ticket) => (
-        <button
-          type="button"
-          key={ticket.id}
-          onClick={() => router.push(`/tickets/${ticket.id}`)}
-          className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 hover:border-blue-400 w-[20vw] transform hover:-translate-y-1 hover:scale-[1.01] active:scale-[0.99]"
-        >
-          <div className="p-6">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <div className="flex justify-between items-center gap-3 mb-2">
-                  <p className="text-sm font-mono text-gray-500">
-                    {ticket.id?.slice(0, 6)}...{ticket.id?.slice(-4)}
-                  </p>
-               
-                  <div
-                    className={`px-3 py-1 flex items-center rounded-full text-xs font-medium border ${getStatusColor(ticket.status)}`}
-                  >
-                    {getStatusIcon(ticket.status)}
-                    <span className="ml-1 capitalize">
-                      {ticket.status.replace("_", " ").replace("-", " ")}
-                    </span>
-                  </div>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 capitalize">
-                  {ticket.category}
-                </h3>
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {ticket.message}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {formatDate(ticket.createdAt)}
-                </div>
-                {ticket.videoUrl && (
-                  <div className="flex items-center gap-1">
-                    <Video className="w-4 h-4" />
-                    Video
-                  </div>
-                )}
-                {(() => {
-                  try {
-                    const screenshots = JSON.parse(
-                      ticket.screenshotUrls || "[]",
-                    );
-                    return screenshots.length > 0 ? (
-                      <div className="flex items-center gap-1">
-                        <ImageIcon className="w-4 h-4" />
-                        {screenshots.length} images
-                      </div>
-                    ) : null;
-                  } catch {
-                    return null;
-                  }
-                })()}
-              </div>
-              {ticket?.assignedTo && (
-                <div className="text-xs text-gray-600">
-                  Assigned to: {ticket?.assignedTo}
-                </div>
-              )}
-            </div>
-          </div>
-        </button>
-      ))}
-
-      {filteredTickets.length === 0 && (
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <FileText className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            {t("dashboard.noTickets")}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {t("dashboard.tryAdjusting")}
-          </p>
-          <Button
-            onClick={() => router.push("/support")}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            {t("dashboard.createNewTicket")}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
 
   const handleAddNew = () => {
     router.push("/support");
@@ -377,7 +169,7 @@ function ClientDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Stats */}
-        <TicketStats />
+        <TicketStats tickets={tickets||[]} />
 
         {/* Search and Filters */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -449,7 +241,7 @@ function ClientDashboard() {
         </div>
 
         {/* Tickets List */}
-        <TicketList />
+        <TicketList tickets={filteredTickets||[]} />
       </div>
     </div>
   );
