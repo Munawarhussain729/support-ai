@@ -22,6 +22,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type Ticket = {
   id: string;
@@ -67,6 +69,7 @@ const statusConfig: Record<
 function TicketDetailContent() {
   const router = useRouter();
   const params = useParams();
+  const t = useTranslations();
   const ticketId = params?.ticketId as string;
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
@@ -164,7 +167,7 @@ function TicketDetailContent() {
       <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading ticket details...</p>
+          <p className="text-gray-600">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -180,11 +183,10 @@ function TicketDetailContent() {
               <FileText className="w-8 h-8 text-red-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              {error || "Ticket Not Found"}
+              {error || t("tickets.noTicket")}
             </h1>
             <p className="text-gray-600 mb-6">
-              {error ||
-                "The ticket you're looking for doesn't exist or you don't have permission to view it."}
+              {error || t("tickets.noPermission")}
             </p>
             <div className="flex gap-3">
               <Button
@@ -192,10 +194,10 @@ function TicketDetailContent() {
                 variant="outline"
                 className="flex-1"
               >
-                Go Back
+                {t("common.back")}
               </Button>
               <Link href={userRole === "developer" ? "/developer" : "/"}>
-                <Button className="flex-1">Go to Dashboard</Button>
+                <Button className="flex-1">{t("tickets.goToDashboard")}</Button>
               </Link>
             </div>
           </div>
@@ -213,18 +215,21 @@ function TicketDetailContent() {
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-6">
-          <Button
-            onClick={() => router.back()}
-            variant="ghost"
-            className="mb-4 hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              onClick={() => router.back()}
+              variant="ghost"
+              className="hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {t("common.back")}
+            </Button>
+            <LanguageSwitcher />
+          </div>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Ticket Details
+                {t("tickets.title")}
               </h1>
               <p className="text-gray-600 font-mono text-sm">{ticket.id}</p>
             </div>

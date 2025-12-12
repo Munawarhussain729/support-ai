@@ -1,10 +1,14 @@
+"use client";
+
 import AuthForm from "@/components/auth-forms/loginForm";
+import { useTranslations } from "next-intl";
 
 export default function page() {
+  const t = useTranslations();
   return (
     <AuthForm
-      title="Create Your Account"
-      buttonText="Sign Up"
+      title={t("auth.signupTitle")}
+      buttonText={t("auth.signupButton")}
       isSignUp={true}
     />
   );

@@ -20,8 +20,10 @@ import {
   RefreshCw,
   Sparkles,
   TrendingUp,
+  LogOut,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Ticket = {
   id: string;
@@ -70,6 +72,7 @@ const statusColumns = [
 ];
 
 function DeveloperDashboardContent() {
+  const router = useRouter();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(false);
   const [draggedTicket, setDraggedTicket] = useState<string | null>(null);
@@ -142,6 +145,10 @@ function DeveloperDashboardContent() {
     setHoveredColumn(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    router.push("/auth/login");
+  };
   const getTicketsByStatus = (status: string) => {
     return tickets.filter((ticket) => ticket.status === status);
   };
@@ -188,14 +195,23 @@ function DeveloperDashboardContent() {
                 Manage and track all support tickets with ease
               </p>
             </div>
-            <Button
+          <div className="flex flex-col items-center gap-2">
+          <Button
               onClick={fetchTickets}
               className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm hover:shadow transition-all duration-200"
               size="sm"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
+            </Button>  <Button
+              onClick={handleLogout}
+              className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm hover:shadow transition-all duration-200"
+              size="sm"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
+          </div>
           </div>
         </div>
 

@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface AuthFormProps {
   title: string;
@@ -14,6 +16,7 @@ export default function AuthForm({
   buttonText,
   isSignUp,
 }: AuthFormProps) {
+  const t = useTranslations();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -69,14 +72,17 @@ export default function AuthForm({
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow">
-        <h1 className="mb-6 text-center text-2xl font-semibold">{title}</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-center text-2xl font-semibold flex-1">{title}</h1>
+          <LanguageSwitcher />
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignUp && (
             <input
               type="text"
               name="name"
-              placeholder="Full Name"
+              placeholder={t("auth.name")}
               required
               onChange={handleChange}
               className="w-full rounded-lg border p-3 outline-none"
@@ -86,7 +92,7 @@ export default function AuthForm({
           <input
             type="email"
             name="email"
-            placeholder="Email Address"
+            placeholder={t("auth.email")}
             required
             onChange={handleChange}
             className="w-full rounded-lg border p-3 outline-none"
@@ -95,7 +101,7 @@ export default function AuthForm({
           <input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder={t("auth.password")}
             required
             onChange={handleChange}
             className="w-full rounded-lg border p-3 outline-none"

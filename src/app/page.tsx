@@ -21,6 +21,8 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 // --- Types ---
 interface Ticket {
@@ -44,6 +46,7 @@ interface ClientInfo {
 // --- Component ---
 function ClientDashboard() {
   const router = useRouter();
+  const t = useTranslations();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<Ticket[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -166,13 +169,13 @@ function ClientDashboard() {
     const stats = {
       total: tickets?.length,
       pending: tickets?.filter(
-        (t) => t.status === "new" || t.status === "pending",
+        (ticket) => ticket.status === "new" || ticket.status === "pending",
       ).length,
       in_progress: tickets?.filter(
-        (t) => t.status === "in-progress" || t.status === "in_progress",
+        (ticket) => ticket.status === "in-progress" || ticket.status === "in_progress",
       ).length,
       resolved: tickets?.filter(
-        (t) => t.status === "done" || t.status === "resolved",
+        (ticket) => ticket.status === "done" || ticket.status === "resolved",
       ).length,
     };
 
@@ -181,7 +184,7 @@ function ClientDashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Tickets</p>
+              <p className="text-sm text-gray-600 mb-1">{t("dashboard.totalTickets")}</p>
               <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
             </div>
             <FileText className="w-10 h-10 text-blue-500 opacity-20" />
@@ -191,7 +194,7 @@ function ClientDashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Pending</p>
+              <p className="text-sm text-gray-600 mb-1">{t("dashboard.pending")}</p>
               <p className="text-3xl font-bold text-gray-900">
                 {stats.pending}
               </p>
@@ -203,7 +206,7 @@ function ClientDashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">In Progress</p>
+              <p className="text-sm text-gray-600 mb-1">{t("dashboard.inProgress")}</p>
               <p className="text-3xl font-bold text-gray-900">
                 {stats.in_progress}
               </p>
@@ -215,7 +218,7 @@ function ClientDashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Resolved</p>
+              <p className="text-sm text-gray-600 mb-1">{t("dashboard.resolved")}</p>
               <p className="text-3xl font-bold text-gray-900">
                 {stats.resolved}
               </p>
@@ -308,16 +311,16 @@ function ClientDashboard() {
         <div className="bg-white rounded-xl shadow-sm p-12 text-center">
           <FileText className="w-16 h-16 mx-auto text-gray-300 mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No tickets found
+            {t("dashboard.noTickets")}
           </h3>
           <p className="text-gray-600 mb-6">
-            Try adjusting your search or filters
+            {t("dashboard.tryAdjusting")}
           </p>
           <Button
             onClick={() => router.push("/support")}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            Create New Ticket
+            {t("dashboard.createNewTicket")}
           </Button>
         </div>
       )}
@@ -345,13 +348,14 @@ function ClientDashboard() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  Autofixia Support
+                  {t("dashboard.title")}
                 </h1>
-                <p className="text-sm text-gray-600">Client Dashboard</p>
+                <p className="text-sm text-gray-600">{t("dashboard.clientDashboard")}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
+              <LanguageSwitcher />
               <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
                 <User className="w-4 h-4" />
                 {clientInfo.name}
@@ -361,14 +365,14 @@ function ClientDashboard() {
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
               >
                 <Plus className="w-5 h-5" />
-                New Ticket
+                {t("dashboard.newTicket")}
               </Button>
               <Button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
               >
                 <LogOut className="w-5 h-5" />
-                Logout
+                {t("common.logout")}
               </Button>
             </div>
           </div>
@@ -386,7 +390,7 @@ function ClientDashboard() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search tickets by ID, subject, or description..."
+                placeholder={t("tickets.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
@@ -397,7 +401,7 @@ function ClientDashboard() {
               className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:shadow-md flex items-center gap-2"
             >
               <Filter className="w-5 h-5" />
-              Filters
+              {t("common.filter")}
               {showFilters ? (
                 <ChevronUp className="w-4 h-4" />
               ) : (
@@ -408,42 +412,42 @@ function ClientDashboard() {
 
           {showFilters && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200">
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
-                </Label>
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="new">New</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="done">Done</option>
-                  <option value="pending">Pending</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="resolved">Resolved</option>
-                  <option value="closed">Closed</option>
-                </select>
-              </div>
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category
-                </Label>
-                <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Categories</option>
-                  <option value="bug">Bug Report</option>
-                  <option value="feature">Feature Request</option>
-                  <option value="question">Question</option>
-                  <option value="suggestion">Suggestion</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t("tickets.status")}
+                    </Label>
+                    <select
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="all">{t("tickets.allStatuses")}</option>
+                      <option value="new">{t("tickets.new")}</option>
+                      <option value="in-progress">{t("dashboard.inProgress")}</option>
+                      <option value="done">{t("tickets.done")}</option>
+                      <option value="pending">{t("dashboard.pending")}</option>
+                      <option value="in_progress">{t("dashboard.inProgress")}</option>
+                      <option value="resolved">{t("dashboard.resolved")}</option>
+                      <option value="closed">{t("tickets.closed")}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t("tickets.category")}
+                    </Label>
+                    <select
+                      value={filterCategory}
+                      onChange={(e) => setFilterCategory(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="all">{t("tickets.allCategories")}</option>
+                      <option value="bug">{t("tickets.bug")}</option>
+                      <option value="feature">{t("tickets.feature")}</option>
+                      <option value="question">{t("tickets.question")}</option>
+                      <option value="suggestion">{t("tickets.suggestion")}</option>
+                      <option value="other">{t("tickets.other")}</option>
+                    </select>
+                  </div>
             </div>
           )}
         </div>

@@ -19,6 +19,8 @@ import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
 import { Upload, X } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const formSchema = z.object({
   clientName: z.string().min(1, "Name is required"),
@@ -36,6 +38,7 @@ type FormData = z.infer<typeof formSchema>;
 
 function SupportPageContent() {
   const router = useRouter();
+  const t = useTranslations();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -163,14 +166,16 @@ function SupportPageContent() {
     // biome-ignore lint/correctness/noUnusedVariables: bg-linear-to-br is correct Tailwind syntax
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Submit a Support Ticket
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Fill out the form below and we'll get back to you as soon as
-            possible.
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              {t("support.title")}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("support.description")}
+            </p>
+          </div>
+          <LanguageSwitcher />
         </div>
 
         <form
@@ -180,12 +185,12 @@ function SupportPageContent() {
           {/* Client Name */}
           <div className="space-y-2">
             <Label htmlFor="clientName">
-              Name <span className="text-destructive">*</span>
+              {t("support.nameLabel")} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="clientName"
               {...register("clientName")}
-              placeholder="John Doe"
+              placeholder={t("support.namePlaceholder")}
               disabled={isSubmitting}
               className="transition-all focus:ring-2 focus:ring-blue-500"
             />
@@ -199,13 +204,13 @@ function SupportPageContent() {
           {/* Client Email */}
           <div className="space-y-2">
             <Label htmlFor="clientEmail">
-              Email <span className="text-destructive">*</span>
+              {t("support.emailLabel")} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="clientEmail"
               type="email"
               {...register("clientEmail")}
-              placeholder="john@example.com"
+              placeholder={t("support.emailPlaceholder")}
               disabled={isSubmitting}
               className="transition-all focus:ring-2 focus:ring-blue-500"
             />
@@ -218,12 +223,12 @@ function SupportPageContent() {
 
           {/* Client Phone */}
           <div className="space-y-2">
-            <Label htmlFor="clientPhone">Phone</Label>
+            <Label htmlFor="clientPhone">{t("support.phoneLabel")}</Label>
             <Input
               id="clientPhone"
               type="tel"
               {...register("clientPhone")}
-              placeholder="+1 (555) 123-4567"
+              placeholder={t("support.phonePlaceholder")}
               disabled={isSubmitting}
               className="transition-all focus:ring-2 focus:ring-blue-500"
             />
@@ -237,7 +242,7 @@ function SupportPageContent() {
           {/* Category */}
           <div className="space-y-2">
             <Label htmlFor="category">
-              Category <span className="text-destructive">*</span>
+              {t("support.categoryLabel")} <span className="text-destructive">*</span>
             </Label>
             <Select
               value={category}
@@ -249,13 +254,13 @@ function SupportPageContent() {
               }
             >
               <SelectTrigger id="category">
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder={t("support.selectCategory")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="bug">Bug</SelectItem>
-                <SelectItem value="request">Feature Request</SelectItem>
-                <SelectItem value="suggestion">Suggestion</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="bug">{t("tickets.bug")}</SelectItem>
+                <SelectItem value="request">{t("tickets.feature")}</SelectItem>
+                <SelectItem value="suggestion">{t("tickets.suggestion")}</SelectItem>
+                <SelectItem value="other">{t("tickets.other")}</SelectItem>
               </SelectContent>
             </Select>
             {errors.category && (
@@ -268,12 +273,12 @@ function SupportPageContent() {
           {/* Message */}
           <div className="space-y-2">
             <Label htmlFor="message">
-              Message <span className="text-destructive">*</span>
+              {t("support.messageLabel")} <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="message"
               {...register("message")}
-              placeholder="Describe your issue or request..."
+              placeholder={t("support.messagePlaceholder")}
               rows={6}
             />
             {errors.message && (
@@ -285,7 +290,7 @@ function SupportPageContent() {
 
           {/* Video Upload */}
           <div className="space-y-2">
-            <Label htmlFor="video">Video (MP4 or MOV)</Label>
+            <Label htmlFor="video">{t("support.videoLabel")}</Label>
             <div className="flex items-center gap-4">
               <Input
                 id="video"
@@ -314,7 +319,7 @@ function SupportPageContent() {
 
           {/* Screenshot Upload */}
           <div className="space-y-2">
-            <Label htmlFor="screenshots">Screenshots</Label>
+            <Label htmlFor="screenshots">{t("support.screenshotsLabel")}</Label>
             <Input
               id="screenshots"
               type="file"
@@ -352,7 +357,7 @@ function SupportPageContent() {
           {isSubmitting && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Uploading...</span>
+                <span className="text-muted-foreground">{t("support.uploading")}</span>
                 <span className="text-muted-foreground">{uploadProgress}%</span>
               </div>
               <Progress value={uploadProgress} />
@@ -365,7 +370,7 @@ function SupportPageContent() {
             className="w-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit Ticket"}
+            {isSubmitting ? t("support.submitting") : t("support.submitButton")}
           </Button>
         </form>
       </div>
